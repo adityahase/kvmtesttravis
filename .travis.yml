@@ -32,5 +32,5 @@ script:
   - qemu-img convert -O qcow2 disk.img.dist disk.img.orig
   - cloud-localds my-seed.img my-user-data
   - qemu-img create -f qcow2 -b disk.img.orig disk.img
-  - sudo kvm -net nic -net user -hda disk.img -hdb my-seed.img -m 512
+  - sudo kvm -net nic -net user -hda disk.img -hdb my-seed.img -m 512 -curses
 
