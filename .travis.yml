@@ -7,6 +7,7 @@ addons:
     packages:
     - qemu-kvm
     - cpu-checker
+    - cloud-utils
 
 install:
   - egrep -c '(vmx|svm)' /proc/cpuinfo
@@ -14,6 +15,22 @@ install:
 
 script:
   - sudo kvm-ok
-  - wget http://cdimage.ubuntu.com/ubuntu-core/18/stable/current/ubuntu-core-18-amd64.img.xz
-  - unxz ubuntu-core-18-amd64.img.xz
-  - sudo kvm -smp 2 -m 1500 -netdev user,id=mynet0,hostfwd=tcp::8022-:22,hostfwd=tcp::8090-:80 -device virtio-net-pci,netdev=mynet0 -vga qxl -drive file=ubuntu-core-18-amd64.img,format=raw
+  # - wget http://cdimage.ubuntu.com/ubuntu-core/18/stable/current/ubuntu-core-18-amd64.img.xz
+  # - unxz ubuntu-core-18-amd64.img.xz
+  # - sudo kvm -smp 2 -m 1500 -netdev user,id=mynet0,hostfwd=tcp::8022-:22,hostfwd=tcp::8090-:80 -device virtio-net-pci,netdev=mynet0 -vga qxl -drive file=ubuntu-core-18-amd64.img,format=raw
+
+  - wget http://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.img -O disk.img.dist
+
+  - | 
+    cat > my-user-data <<EOF
+    #cloud-config
+    password: passw0rd
+    chpasswd: { expire: False }
+    ssh_pwauth: True
+    EOF
+
+  - qemu-img convert -O qcow2 disk.img.dist disk.img.orig
+  - cloud-localds my-seed.img my-user-data
+  - qemu-img create -f qcow2 -b disk.img.orig disk.img
+  - sudo kvm -net nic -net user -hda disk.img -hdb my-seed.img -m 512
+
