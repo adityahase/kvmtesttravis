@@ -1,11 +1,14 @@
 sudo: required
 dist: bionic
 
+addons:
+  apt:
+    update: true
+    packages:
+    - qemu-kvm
+
 install:
   - egrep -c '(vmx|svm)' /proc/cpuinfo
-  - lsmod | grep -i kvm
-  - sudo apt install qemu-kvm
-  - sudo apt install cpu-checker
   - lsmod | grep -i kvm
 
 script:
