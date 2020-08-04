@@ -1,0 +1,10 @@
+sudo: required
+
+install:
+  - sudo apt install qemu-kvm
+
+script:
+  - kvm-ok
+  - wget http://cdimage.ubuntu.com/ubuntu-core/18/stable/current/ubuntu-core-18-amd64.img.xz?_ga=2.254109071.682590660.1596556210-2130221533.1595485809
+  - unxz ubuntu-core-18-amd64.img.xz
+  - kvm -smp 2 -m 1500 -netdev user,id=mynet0,hostfwd=tcp::8022-:22,hostfwd=tcp::8090-:80 -device virtio-net-pci,netdev=mynet0 -vga qxl -drive file=ubuntu-core-18-amd64.img,format=raw
