@@ -1,4 +1,5 @@
 sudo: required
+ubuntu: bionic
 
 install:
   - egrep -c '(vmx|svm)' /proc/cpuinfo
