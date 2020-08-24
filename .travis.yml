@@ -20,8 +20,8 @@ script:
   - sudo kvm-ok
   - id
   - sudo systemctl status libvirtd
-  - newgrp libvirt
-  - newgrp kvm
+  - sudo newgrp libvirt
+  - sudo newgrp kvm
   - id
   - sudo systemctl status libvirtd
   - virsh list --all
